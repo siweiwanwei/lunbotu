@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>选项卡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #wrap {
+            height: 400px;
+            width: 400px;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        #wrap .nav {
+            position: absolute;
+            height: 20px;
+            width: 200px;
+            left: 100px;
+            bottom: 50px;
+            background-color: rgba(133, 122, 10, 0.3);
+            border-radius: 5px;
+        }
+
+        #wrap .nav li {
+            float: left;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #000000;
+            margin-left: 32px;
+            margin-top: 5px;
+        }
+
+        #wrap .nav li.selected {
+            background-color: red;
+        }
+
+        #wrap .content {
+            height: 400px;
+            width: 400px;
+        }
+
+        #wrap .content li {
+            height: 400px;
+            width: 400px;
+            display: none;
+        }
+
+        #wrap .content li.selected {
+            display: block;
+        }
+
+        #wrap .content li img {
+            height: 400px;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <ul class="nav">
+        <li class="selected"></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <ul class="content">
+        <li class="selected">
+            <img src="img/small1.jpg">
+        </li>
+        <li><img src="img/small2.jpg">
+        </li>
+        <li>
+            <img src="img/small3.jpg">
+        </li>
+        <li>
+            <img src="img/small4.jpg">
+
+        </li>
+    </ul>
+</div>
+</body>
+<script>
+    var navList = document.getElementsByClassName("nav")[0].getElementsByTagName("li");//$(".nav li")
+    var contentList = document.getElementsByClassName("content")[0].getElementsByTagName("li");
+
+    var maxIndex = contentList.length;
+    var index = 0;
+    var timer = null;
+    start();
+    function start() {
+        clearInterval(timer);
+        timer = setInterval(function () {
+            index++;
+            if (index == maxIndex) {
+                index = 0;
+            }
+            show();
+
+        }, 1000);
+    }
+
+
+    for (var i = 0; i < navList.length; i++) {
+        var item = navList[i];
+        item.index = i;
+        //item.setAttribute("index",i);
+        item.onmouseover = function (){//鼠标经过
+            //把所有的li的样式都去掉  只给自己加
+            index = this.index;
+            show();
+            clearInterval(timer);
+        }
+        item.onmouseout = function () { //鼠标离开
+            start();
+        }
+    }
+
+
+    function show() {
+        for (var j = 0; j < navList.length; j++) {
+            navList[j].removeAttribute("class");
+            contentList[j].removeAttribute("class");
+        }
+        navList[index].className = "selected";
+        contentList[index].className = "selected";
+    }
+
+</script>
+</html>
