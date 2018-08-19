@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>放大镜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .left {
+            width: 400px;
+            height: 600px;
+            margin-left: 50px;
+            margin-top: 100px;
+            position: relative;
+        }
+
+        .left .left-top {
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+
+        .left-top img {
+            height: 400px;
+            width: 400px;
+        }
+
+        .left .left-nav {
+            width: 400px;
+            height: 150px;
+            margin-top: 50px;
+        }
+
+        .left-nav li {
+            height: 50px;
+            width: 50px;
+            float: left;
+            margin-left: 40px;
+        }
+
+        .left-nav li img {
+            height: 50px;
+            width: 50px;
+        }
+
+        #shadow {
+            height: 100px;
+            width: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: rgba(99, 100, 108, 0.4);
+            display: none;
+            border-radius: 50%;
+        }
+
+        #show {
+            height: 400px;
+            width: 400px;
+            position: absolute;
+            left: 500px;
+            top: 0;
+            overflow: hidden;
+            display: none;
+            border-radius: 50%;
+        }
+
+        #show img {
+            height: 1600px;
+            width: 1600px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="left">
+    <div class="left-top">
+        <img id="smallImg" src="img/small1.jpg" draggable="false">
+        <div id="shadow"></div>
+    </div>
+    <div id="show">
+        <img src="img/big1.jpg" id="bigImg">
+    </div>
+    <ul class="left-nav">
+        <li>
+            <img src="img/small1.jpg" data-img="img/big1.jpg">
+        </li>
+        <li>
+            <img src="img/small2.jpg" data-img="img/big2.jpg">
+        </li>
+        <li>
+            <img src="img/small3.jpg" data-img="img/big3.jpg">
+        </li>
+        <li>
+            <img src="img/small4.jpg" data-img="img/big4.jpg">
+        </li>
+    </ul>
+</div>
+</body>
+<script>
+    var navList = document.getElementsByClassName("left-nav")[0].getElementsByTagName("li");//所有导航里面li的集合
+    var smallImg = document.getElementById("smallImg");//找到显示的图片
+    var left_top = document.getElementsByClassName("left-top")[0];//找到移动的区域
+    var shadow = document.getElementById("shadow");
+    var left = document.getElementsByClassName("left")[0];
+    var bigImg = document.getElementById("bigImg");
+    var show = document.getElementById("show");
+
+    var shadowWidth = parseInt(getStyleAttr(shadow, "width"));
+    var shadowHeight = parseInt(getStyleAttr(shadow, "height"));
+    var wrapLeft = parseInt(getStyleAttr(left, "marginLeft"));
+    var wrapTop = parseInt(getStyleAttr(left, "marginTop"));
+    var left_topWidth = parseInt(getStyleAttr(left_top, "width"));
+    var left_topHeight = parseInt(getStyleAttr(left_top, "height"));
+
+    var bigImgHeight = parseInt(getStyleAttr(bigImg, "height"));
+    var bigImgWidth = parseInt(getStyleAttr(bigImg, "width"));
+
+    var maxX = left_topWidth - shadowWidth;
+    var maxY = left_topHeight - shadowHeight;
+
+
+    left_top.onmousemove = function (e) {
+        var evt = window.event || e;
+        evt.stopPropagation();
+        shadow.style.display = "block";
+        show.style.display = "block";
+
+        var evtX = evt.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+        var evtY = evt.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
+        var x = evtX - shadowWidth / 2 - wrapLeft;
+        var y = evtY - shadowHeight / 2 - wrapTop;
+        if (x <= 0) {
+            x = 0;
+        }
+        if (y <= 0) {
+            y = 0;
+        }
+        if (x >= maxX) {
+            x = maxX;
+        }
+        if (y >= maxY) {
+            y = maxY;
+        }
+
+        //  x/400 = ?/800      ;   x:400  =  ? : 800
+        // 400*? = 800*x
+        // ? =800*x/400;
+
+        var bigX = (x / 400) * bigImgWidth;
+        var bigY = (y / 400) * bigImgHeight;
+
+        shadow.style.left = x + "px";
+        shadow.style.top = y + "px";
+        bigImg.style.left = -bigX + "px";
+        bigImg.style.top = -bigY + "px";
+
+    }
+    left_top.onmouseout = function () {
+        shadow.style.display = "none";
+        show.style.display = "none";
+    }
+
+    for (var i = 0; i < navList.length; i++) {
+        var li = navList[i];
+        li.onmouseover = function () {
+            var img = this.getElementsByTagName("img")[0];
+            var imgSrc = img.src;
+            smallImg.src = imgSrc;
+            var bigsrc = img.getAttribute("data-img");
+            bigImg.src = bigsrc;
+
+        }
+    }
+
+    function getStyleAttr(obj, attr) {
+        if (window.getComputedStyle) {
+            return window.getComputedStyle(obj)[attr];
+        } else {
+            return obj.currentStyle[attr];
+        }
+    }
+
+</script>
+</html>
